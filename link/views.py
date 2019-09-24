@@ -38,8 +38,9 @@ template = """
 <div>
 Pay bill
 </div>
+<img id="top-logo" style="width: 100px; margin: 20px;" src="https://setu.co/static/media/logo-dp-on-tp.52e425de.svg" alt="Setu logo">
 
-<a href="{upiLink}">Open UPI to pay</a>
+<a style="font-size:30px;" href="{upiLink}">Open UPI to pay</a>
 
 <HR>
 
