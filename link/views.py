@@ -43,9 +43,9 @@ def linkpage(request, payId):
         except Exception as e:
             print(e)
 
-        data.update(defaultData)
+        defaultData.update(data)
 
-        context = dict(upiLink=upiLink.link, data=data)
+        context = dict(upiLink=upiLink.link, data=defaultData)
         return render(request, 'link/index.html', context)
     return HttpResponse("Not found", status=404)
 
