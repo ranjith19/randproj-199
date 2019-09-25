@@ -35,14 +35,23 @@ def linkpage(request, payId):
     x = UPILink.objects.get(identifier=payId)
     if UPILink.objects.filter(identifier=payId).exists():
         upiLink = UPILink.objects.get(identifier=payId)
-        context = dict(upiLink=upiLink.link)
+        defaultData = {
+            'logoUrl': 'https://setu.co/static/media/logo-dp-on-tp.52e425de.svg'}
+        data = {}
+        try:
+            data = json.loads(str(upiLink.json_data))
+        except Exception as e:
+            print(e)
+
+        data.update(defaultData)
+
+        context = dict(upiLink=upiLink.link, data=data)
         return render(request, 'link/index.html', context)
     return HttpResponse("Not found", status=404)
 
 
 def data_view(request, payId):
     x = UPILink.objects.get(identifier=payId)
-    print(UPILink.objects.filter(identifier=payId).exists())
     if UPILink.objects.filter(identifier=payId).exists():
         upiLink = UPILink.objects.get(identifier=payId)
         data = {}

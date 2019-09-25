@@ -8,13 +8,12 @@
 </HEAD>
 
 <BODY BGCOLOR="FFFFFF">
-    <div class="container">
+    <div class="container" id="app">
         <div class="row">
-            <img id="top-logo" style="width: 100px; margin: 20px;"
-                src="https://setu.co/static/media/logo-dp-on-tp.52e425de.svg" alt="Setu logo">
+            <img id="top-logo" style="width: 100px; margin: 20px;" src="{{data.logoUrl }}" alt="Setu logo">
 
         </div>
-        <div id="app" class="row">
+        <div class="row">
             <div class="twelve columns">
                 <ul v-if="dataStore.data">
                     <li>VPA: [[ dataStore.data.vpa ]]</li>
