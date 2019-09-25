@@ -1,6 +1,7 @@
 from django.http import JsonResponse, HttpResponse
 import json
 import urllib.parse as parse
+from django.shortcuts import render
 import random
 from .models import UPILink
 from django.views.decorators.csrf import csrf_exempt
@@ -22,39 +23,32 @@ def create_vpa_link(request):
         s = "upi://pay?cu=INR&mode=01&pa={vpa}&pn={name}&am={amount}&tr={tid}&tn={notes}".format(
             vpa=vpa, amount=amount, name=name, notes=notes, tid=tid
         )
-        upiLink = UPILink.objects.create(link=s)
+        host = request.META.get("HTTP_HOST", hosted_at)
+        upiLink = UPILink.objects.create(
+            link=s, json_data=json.dumps(request_data))
         l = "{0}/pay/{1}".format(hosted_at, upiLink.identifier)
         return JsonResponse(status=200, data={"link": l})
     return JsonResponse(status=405, data={})
 
 
-template = """
-<HTML>
-<HEAD>
-<TITLE>Your Title Here</TITLE>
-</HEAD>
-<BODY BGCOLOR="FFFFFF">
-<HR>
-<div>
-Pay bill
-</div>
-<img id="top-logo" style="width: 100px; margin: 20px;" src="https://setu.co/static/media/logo-dp-on-tp.52e425de.svg" alt="Setu logo">
-
-<a style="font-size:30px;" href="{upiLink}">Open UPI to pay</a>
-
-<HR>
-
-</BODY>
-
-</HTML>
-"""
-
-
 def linkpage(request, payId):
+    x = UPILink.objects.get(identifier=payId)
+    if UPILink.objects.filter(identifier=payId).exists():
+        upiLink = UPILink.objects.get(identifier=payId)
+        context = dict(upiLink=upiLink.link)
+        return render(request, 'link/index.html', context)
+    return HttpResponse("Not found", status=404)
+
+
+def data_view(request, payId):
     x = UPILink.objects.get(identifier=payId)
     print(UPILink.objects.filter(identifier=payId).exists())
     if UPILink.objects.filter(identifier=payId).exists():
         upiLink = UPILink.objects.get(identifier=payId)
-        content = template.format(upiLink=upiLink.link)
-        return HttpResponse(content)
+        data = {}
+        try:
+            data = json.loads(str(upiLink.json_data))
+        except Exception as e:
+            print(e)
+        return JsonResponse(status=200, data=data)
     return HttpResponse("Not found", status=404)

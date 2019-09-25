@@ -12,3 +12,4 @@ def get_random_string():
 class UPILink(models.Model):
     link = models.TextField()
     identifier = models.CharField(default=get_random_string, max_length=20)
+    json_data = models.TextField()
